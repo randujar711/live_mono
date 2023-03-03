@@ -1,0 +1,17 @@
+// how to fetch
+const Profile =() => {
+    useEffect(() => {
+    let request = async() => {
+        const token = localStorage.getItem('token')
+        let req = await fetch ('host name', {
+            method: 'delete', 
+            header: {'Authorization' : 'Bearer ' + token}
+        })
+        if (req.ok){
+            req.json()
+        }
+        else{
+        }
+    }
+    }, [])
+}
