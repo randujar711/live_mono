@@ -12,8 +12,11 @@ class User(db.Model):
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    admin = db.Column(db.Boolean, server_default='f', nullable=True)
-    posts = db.relationship('Post', backref='user', lazy=True)
+    fullname = db.Column(db.String(120), nullable=False)
+    host = db.Column(db.Boolean, server_default='f', nullable=True)
+    balance = db.Column(db.Integer, server_default=1500, nullable=False)
+    # posts = db.relationship('Post', backref='user', lazy=True)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True) #lazy true lets the db know when to access the related object, in this case only room will be accessed when it is accessed
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -36,7 +39,34 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.username
+class Room(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Boolean, nullable=True)
+    user = db.relationship('user', backref='room', lazy=True)
+    prop = db.relationship('roperty', backref='room', lazy=True)
 
+    def __init__(self, active): 
+        self.active = active
+
+    def to_dict(self):
+        return{
+            'id': self.id,
+            'active': self.active,
+            'user_id': self.user_id
+        }
+
+    def __repr__(self):
+        return f'<Room {self.id}>'
+
+class Property(db.Model): 
+    __tablename__= 'properties'
+    id = db.Column(db.Integer, primary_key=True)
+    price = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.String(120), nullable=False, unique=True)
+    hotel = db.Column(db.Booolean, nullable=True)
+    hotel_price = db.Column(db.Integer, nullable=False)
+    user = db.relationship()
 
 class Post(db.Model):
     __tablename__ = 'posts'
