@@ -5,7 +5,8 @@ import os
 # if the variable is not found/undefined, set the second string as the value
 class Config:
     SECRET_KEY = os.getenv('SECRET_KEY', 'abc123')
-    SQLALCHEMY_DATABASE_URI = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///development.sqlite3')
+    SQLALCHEMY_DATABASE_URI = os.getenv(
+        'SQLALCHEMY_DATABASE_URI', 'postgresql://ryan_live:123456@localhost:3000/mydb')  # change to db in postgres uri
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     JWT_SECRET_KEY = 'burntheboats'
     DEBUG = True

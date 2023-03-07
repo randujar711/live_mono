@@ -14,7 +14,7 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False)
     fullname = db.Column(db.String(120), nullable=False)
     host = db.Column(db.Boolean, server_default='f', nullable=True)
-    balance = db.Column(db.Integer, server_default=1500, nullable=False)
+    balance = db.Column(db.Integer, server_default='1500', nullable=False)
     # posts = db.relationship('Post', backref='user', lazy=True)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True) #lazy true lets the db know when to access the related object, in this case only room will be accessed when it is accessed
     created_at = db.Column(db.DateTime, server_default=db.func.now())
@@ -44,7 +44,7 @@ class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.Boolean, nullable=True)
     user = db.relationship('user', backref='room', lazy=True)
-    prop = db.relationship('roperty', backref='room', lazy=True)
+    prop = db.relationship('property', backref='room', lazy=True)
 
     def __init__(self, active): 
         self.active = active
@@ -64,7 +64,7 @@ class Property(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(120), nullable=False, unique=True)
-    hotel = db.Column(db.Booolean, nullable=True)
+    hotel = db.Column(db.Boolean, nullable=True)
     hotel_price = db.Column(db.Integer, nullable=False)
     user = db.relationship()
 

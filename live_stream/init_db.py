@@ -1,6 +1,6 @@
 import os
 import psycopg2
-
+#use this file if your not using sql alchemy + postgres together. This 'defines what you would need' if your just using postgres
 conn = psycopg2.connect(
     host="localhost",
     database="mydb",
