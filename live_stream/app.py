@@ -123,25 +123,53 @@ def show_post(id):
     return jsonify(post.to_dict())
 
 
-@socketio.on('connect')
-def connected():
-    '''This function is an event listener that gets called when the client connects to the server'''
-    print(f'Client {request.sid} has connected')
-    emit('connect', {'data': f'id: {request.sid} is connected'})
+# Below->>>>Define an event handler for the join event and get the username and room from the client’s argument. Add the client to that room with join_room. Now, send a ready event to all other connected peers(only one in our case) using emit with the help of skip_sid = request.sid.
+@socketio.on('join')
+def join(message):
+    username = message['username']
+    room = message['room']
+    join_room(room)
+    print('RoomEvent: {} has joined the room {}\n'.format(username, room))
+    emit('ready', {username: username}, to=room, skip_sid=request.sid)
 
 
+# Below ->>>> Define an event handler for the data event. This will be used to transfer the data part of the message from the sender to the other client(by excluding the sender’s sid with skip_sid).                  This is PROB where we would pass game data
 @socketio.on('data')
-def handle_message(data):
-    '''This function runs whenever a client sends a socket message to be broadcast'''
-    print(f'Message from Client {request.sid} : ', data)
-    emit('data', {'data': 'data', 'id': request.sid}, broadcast=True)
+def transfer_data(message):
+    username = message['username']
+    room = message['room']
+    data = message['data']
+    print('DataEvent: {} has sent the data:\n {}\n'.format(username, data))
+    emit('data', data, to=room, skip_sid=request.sid)
+
+# Below ->>>>> Our basic signaling server is almost ready now. All that’s left is to handle various errors and deploy it to production. Of course, don’t forget to stop the server on encountering any errors.
 
 
-@socketio.on("disconnect")
-def disconnected():
-    '''This function is an event listener that gets called when the client disconnects from the server'''
-    print(f'Client {request.sid} has disconnected')
-    emit('disconnect', f'Client {request.sid} has disconnected', broadcast=True)
+@socketio.on_error_default
+def default_error_handler(e):
+    print("Error: {}".format(e))
+    socketio.stop()
+
+
+# @socketio.on('connect')
+# def connected():
+#     '''This function is an event listener that gets called when the client connects to the server'''
+#     print(f'Client {request.sid} has connected')
+#     emit('connect', {'data': f'id: {request.sid} is connected'})
+
+
+# @socketio.on('data')
+# def handle_message(data):
+#     '''This function runs whenever a client sends a socket message to be broadcast'''
+#     print(f'Message from Client {request.sid} : ', data)
+#     emit('data', {'data': 'data', 'id': request.sid}, broadcast=True)
+
+
+# @socketio.on("disconnect")
+# def disconnected():
+#     '''This function is an event listener that gets called when the client disconnects from the server'''
+#     print(f'Client {request.sid} has disconnected')
+#     emit('disconnect', f'Client {request.sid} has disconnected', broadcast=True)
 
 
 if __name__ == '__main__':
