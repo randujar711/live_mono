@@ -3,7 +3,7 @@ from flask import Flask, send_file, request, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
 from config import Config
-from models import db, User, Post
+from models import db, User
 from pprint import pprint
 from flask_socketio import SocketIO, emit
 import platform

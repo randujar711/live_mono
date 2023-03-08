@@ -17,6 +17,7 @@ class User(db.Model):
     balance = db.Column(db.Integer, server_default='1500', nullable=False)
     # posts = db.relationship('Post', backref='user', lazy=True)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True) #lazy true lets the db know when to access the related object, in this case only room will be accessed when it is accessed
+    properties = db.relationship('Property', backref='user', lazy=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -33,7 +34,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'posts': [post.to_dict() for post in Post.query.filter_by(user_id=self.id)],
+            'properties': [prop.to_dict() for prop in self.properties],
             'created_at': self.created_at
         }
 
@@ -43,8 +44,8 @@ class Room(db.Model):
     __tablename__ = 'posts'
     id = db.Column(db.Integer, primary_key=True)
     active = db.Column(db.Boolean, nullable=True)
-    user = db.relationship('user', backref='room', lazy=True)
-    prop = db.relationship('property', backref='room', lazy=True)
+    users = db.relationship('user', backref='room', lazy=True)
+    properties = db.relationship('property', backref='room', lazy=True)
 
     def __init__(self, active): 
         self.active = active
@@ -53,7 +54,9 @@ class Room(db.Model):
         return{
             'id': self.id,
             'active': self.active,
-            'user_id': self.user_id
+            'user_id': self.user_id, 
+            'users': [user.to_dict() for user in self.users],
+            'properties': [prop.to_dict() for prop in self.properties]
         }
 
     def __repr__(self):
@@ -66,28 +69,51 @@ class Property(db.Model):
     name = db.Column(db.String(120), nullable=False, unique=True)
     hotel = db.Column(db.Boolean, nullable=True)
     hotel_price = db.Column(db.Integer, nullable=False)
-    user = db.relationship()
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 
-class Post(db.Model):
-    __tablename__ = 'posts'
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text, nullable=False)
-    status = db.Column(db.String, nullable=True, server_default='published')
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
-
-    def __init__(self, content):
-        self.content = content
+    def __init__(self, price, name, hotel, hotel_price):
+        self.price = price
+        self.name = name
+        self.hotel = hotel 
+        self.hotel_price = hotel_price
 
     def to_dict(self):
-        return {
+        return{
             'id': self.id,
-            'content': self.content,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at,
+            'price': self.price,
+            'name': self.name, 
+            'hotel': self.hotel, 
+            'hotel_price': self.hotel_price, 
+            'room_id': self.room_id, 
             'user_id': self.user_id
-        }
+        } 
+    
+    def __repr__(self): 
+        return f'<Property {self.id}>'
 
-    def __repr__(self):
-        return f'<Post {self.id}>'
+
+# class Post(db.Model):
+#     __tablename__ = 'posts'
+#     id = db.Column(db.Integer, primary_key=True)
+#     content = db.Column(db.Text, nullable=False)
+#     status = db.Column(db.String, nullable=True, server_default='published')
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+#     created_at = db.Column(db.DateTime, server_default=db.func.now())
+#     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
+
+#     def __init__(self, content):
+#         self.content = content
+
+#     def to_dict(self):
+#         return {
+#             'id': self.id,
+#             'content': self.content,
+#             'created_at': self.created_at,
+#             'updated_at': self.updated_at,
+#             'room_id':seld.room_id,
+#             'user_id': self.user_id
+#         }
+
+#     def __repr__(self):
+#         return f'<Post {self.id}>'
