@@ -5,7 +5,7 @@ from flask_cors import CORS
 from config import Config
 from models import db, User
 from pprint import pprint
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO, emit, join_room
 import platform
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 
@@ -173,4 +173,4 @@ def default_error_handler(e):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=os.environ.get('PORT', 3000))
+    socketio.run(app, host='0.0.0.0', port=os.environ.get('PORT', 9000))

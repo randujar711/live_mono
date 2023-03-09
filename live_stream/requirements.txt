@@ -7,3 +7,6 @@ bcrypt==3.2.2
 psycopg2==2.9.3
 Flask-SocketIO==5.2.0
 Flask-JWT-Extended==4.4.4
+eventlet==0.30.2
+gevent-websocket
+simple-websocket
