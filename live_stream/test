@@ -1,17 +1,61 @@
-// how to fetch
-const Profile =() => {
-    useEffect(() => {
-    let request = async() => {
-        const token = localStorage.getItem('token')
-        let req = await fetch ('host name', {
-            method: 'delete', 
-            header: {'Authorization' : 'Bearer ' + token}
-        })
-        if (req.ok){
-            req.json()
-        }
-        else{
-        }
-    }
-    }, [])
-}
+// // how to fetch
+// const Profile =() => {
+//     useEffect(() => {
+//     let request = async() => {
+//         const token = localStorage.getItem('token')
+//         let req = await fetch ('host name', {
+//             method: 'delete', 
+//             header: {'Authorization' : 'Bearer ' + token}
+//         })
+//         if (req.ok){
+//             req.json()
+//         }
+//         else{
+//         }
+//     }
+//     }, [])
+// }
+
+// go = Property('200', 'Go', 'False', '0')
+//       prop1 = Property('200', 'Central Park', 'False', '600'), 
+//       print('this is go and prop1', go, prop1)
+//       prop2 = Property('200', 'Empire State Building', 'False', '600')
+//       prop3 = Property('200', 'Statue of Liberty', 'False', '600')
+//       print ('this is prop1 and 3 ', prop1, prop2)
+//       replace1 = Property('0', 'Go to Jail', 'False', '0')
+
+//       prop4 = Property('200', 'Lincoln Tunnel', 'False', '600')
+//       prop5 = Property('200', 'Port Authority', 'False', '600')
+
+//       replace2 = Property('100', 'Pay 100', 'False', '0')
+
+//       prop6 = Property('200', 'Trump Tower', 'False', '600')
+//       prop7 = Property('200', 'Tiffany & Co.', 'False', '600')
+
+//       replace3 = Property('0', 'Back 3 Spaces', 'False', '0')
+
+//       prop8 = Property('200', 'Kiss FM', 'False', '600')
+//       prop9 = Property('200', 'Thirteen .Net', 'False', '600')
+//       prop10 = Property('200', 'New York Times', 'False', '600')
+
+//       replace4 = Property('0', 'Muted', 'False', '0')
+
+//       prop11 = Property('200', 'Rangers', 'False', '600')
+//       prop12 = Property('200', 'Knicks', 'False', '600')
+//       prop13 = Property('200', 'MSG', 'False', '600')
+
+//       replace5 = Property('0', 'Go to Go', 'False', '0')
+
+//       prop14 = Property('200', 'Essex House', 'False', '600')
+//       prop15 = Property('200', 'The Plaza', 'False', '600')
+//       prop16 = Property('200', 'The Regency Hotel', 'False', '600')
+
+//       prop17 = Property('200', 'Macys', 'False', '600')
+//       prop18 = Property('200', 'Fao Schwartz', 'False', '600')
+//       prop19 = Property('200', 'Bloomingdales', 'False', '600')
+
+//       prop20 = Property('200', 'CitiBank', 'False', '600')
+//       prop21= Property('200', 'Delotte & Touche', 'False', '600')
+//       prop22= Property('200', 'Smithsonian', 'False', '600')
+//       jail = Property('0', 'Jail', 'False', '0')
+

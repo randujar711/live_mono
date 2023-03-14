@@ -5,6 +5,31 @@ db = SQLAlchemy() # create an instance of a database connection
 migrate = Migrate(db) # associate migration functions to it
 
 # This ORM has the migration and the model together
+
+
+class Room(db.Model):
+    __tablename__ = 'rooms'
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Boolean, nullable=True)
+    users = db.relationship('User', backref='rooms', lazy=True) 
+    # users needs to be an object of users not just one user
+    properties = db.relationship('Property', backref='rooms', lazy=True)
+
+    def __init__(self, active, users):
+        self.active = active
+        self.users = users
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'active': self.active,
+            'users': self.users,
+            'users': [user.to_dict() for user in self.users],
+            'properties': [prop.to_dict() for prop in self.properties]
+        }
+
+    def __repr__(self):
+        return f'<Room {self.id}>'
 class User(db.Model):
     # This is the migration part
     __tablename__ = 'users'
@@ -24,43 +49,26 @@ class User(db.Model):
     # This is regular old Python classes
     # Right here is where we "whitelist" what can be set when creating a user
     # any column omitted cannot be set by the user/app manually
-    def __init__(self, username, email, password):
+    def __init__(self, username, email, password, fullname):
         self.username = username
         self.email = email
         self.password = password
+        self.fullname = fullname
 
     def to_dict(self):
         return {
             'id': self.id,
             'username': self.username,
             'email': self.email,
+            'fullname' : self.fullname, 
+            'room_id' : [room.to_dict() for room in self.rooms],
             'properties': [prop.to_dict() for prop in self.properties],
             'created_at': self.created_at
         }
 
     def __repr__(self):
         return '<User %r>' % self.username
-class Room(db.Model):
-    __tablename__ = 'posts'
-    id = db.Column(db.Integer, primary_key=True)
-    active = db.Column(db.Boolean, nullable=True)
-    users = db.relationship('user', backref='room', lazy=True)
-    properties = db.relationship('property', backref='room', lazy=True)
 
-    def __init__(self, active): 
-        self.active = active
-
-    def to_dict(self):
-        return{
-            'id': self.id,
-            'active': self.active,
-            'user_id': self.user_id, 
-            'users': [user.to_dict() for user in self.users],
-            'properties': [prop.to_dict() for prop in self.properties]
-        }
-
-    def __repr__(self):
-        return f'<Room {self.id}>'
 
 class Property(db.Model): 
     __tablename__= 'properties'
@@ -69,8 +77,8 @@ class Property(db.Model):
     name = db.Column(db.String(120), nullable=False, unique=True)
     hotel = db.Column(db.Boolean, nullable=True)
     hotel_price = db.Column(db.Integer, nullable=False)
-    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
     def __init__(self, price, name, hotel, hotel_price):
         self.price = price
@@ -85,8 +93,8 @@ class Property(db.Model):
             'name': self.name, 
             'hotel': self.hotel, 
             'hotel_price': self.hotel_price, 
-            'room_id': self.room_id, 
-            'user_id': self.user_id
+            'room_id': [room.to_dict() for room in self.rooms], 
+            'user_id': [user.to_dict() for user in self.users]
         } 
     
     def __repr__(self): 
