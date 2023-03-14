@@ -46,6 +46,14 @@ def users():
     return jsonify(user.to_dict()), 201
 
 
+@app.get('/properties')
+def properties():
+    # data = request.form
+    properties = Property.query.all()
+    property_list = [prop.to_dict() for prop in properties]
+    # properties.query.count()
+    return jsonify(property_list), 201
+
 @app.patch('/properties')
 def buy_prop():
     data = request.json

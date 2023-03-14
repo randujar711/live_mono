@@ -12,18 +12,6 @@ def run_seeds():
       db.session.add_all([user1])
       db.session.commit()
       print('user committed')
-      # seed_data = [
-      #     {'price': '100', 'name': 'Property 1',
-      #         'hotel': 'True', 'hotel_price': '200'},
-      #     {'price': '200', 'name': 'Property 2',
-      #         'hotel': 'False', 'hotel_price': '0'},
-      #     # more seed data
-      # ]
-      map = [
-         {'price': '200', 'name': 'Central Park', 'hotel': False, 'hotel_price': '600'}, 
-         {'price': '200', 'name': 'Central Park', 'hotel': False, 'hotel_price': '600'},
-         ]
-      print('this is map', map)
       properties = [
           {'price': '200', 'name': 'Go', 'hotel': False, 'hotel_price': '0'},
           {'price': '200', 'name': 'Central Park','hotel': False, 'hotel_price': '600'},
@@ -56,7 +44,6 @@ def run_seeds():
           {'price': '0', 'name': 'jail', 'hotel': False, 'hotel_price': '0'}
           ]
 
-      # print(properties)
       property_list = []
 
       for item in properties:
@@ -70,12 +57,8 @@ def run_seeds():
               property_list.append(prop)
           except Exception as e:
               print(f"Error creating property {item}: {e}")
-
           
-      print(property_list)
-
-      # map.append([go, prop1, prop2, prop3, replace1, prop4, prop5, replace2, prop6, prop7, replace3, prop8, prop9, prop10, replace4, prop11, prop12, prop13, replace5, prop14, prop15, prop16, prop17, prop18, prop19, prop20, prop21, prop22, jail])
-      # print('this is the map object', map)
+      print('this is the prop list', property_list)
       db.session.add_all(property_list)
       room = Room(True, [user1]) 
       # I need to pass a list of instances into the constructor, not a string, this will need to change when I make functionality to add  multiple users 
@@ -83,5 +66,7 @@ def run_seeds():
       db.session.add(room)
       db.session.commit()
       print('Done! 🌳')
+      print('room', room)
+      print('this is the prop list', property_list)
 
 run_seeds()

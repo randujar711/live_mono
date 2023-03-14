@@ -42,7 +42,7 @@ class User(db.Model):
     balance = db.Column(db.Integer, server_default='1500', nullable=False)
     # posts = db.relationship('Post', backref='user', lazy=True)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True) #lazy true lets the db know when to access the related object, in this case only room will be accessed when it is accessed
-    properties = db.relationship('Property', backref='user', lazy=True)
+    # properties = db.relationship('Property', backref='user', lazy=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
@@ -87,15 +87,20 @@ class Property(db.Model):
         self.hotel_price = hotel_price
 
     def to_dict(self):
-        return{
+        property_dict = {
             'id': self.id,
             'price': self.price,
             'name': self.name, 
             'hotel': self.hotel, 
-            'hotel_price': self.hotel_price, 
-            'room_id': [room.to_dict() for room in self.rooms], 
+            'hotel_price': self.hotel_price,  
             'user_id': [user.to_dict() for user in self.users]
         } 
+        if self.rooms is not None:
+            property_dict['room_id'] = [room.to_dict() for room in self.rooms]
+        else:
+            property_dict['room_id'] = []
+
+        return property_dict
     
     def __repr__(self): 
         return f'<Property {self.id}>'
