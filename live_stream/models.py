@@ -43,17 +43,19 @@ class User(db.Model):
     # posts = db.relationship('Post', backref='user', lazy=True)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True) #lazy true lets the db know when to access the related object, in this case only room will be accessed when it is accessed
     # properties = db.relationship('Property', backref='user', lazy=True)
+    properties = db.Column(db.Integer, nullable=True)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now())
 
     # This is regular old Python classes
     # Right here is where we "whitelist" what can be set when creating a user
     # any column omitted cannot be set by the user/app manually
-    def __init__(self, username, email, password, fullname):
+    def __init__(self, username, email, password, fullname, properties):
         self.username = username
         self.email = email
         self.password = password
         self.fullname = fullname
+        self.properties = properties
 
     def to_dict(self):
         return {
@@ -62,7 +64,7 @@ class User(db.Model):
             'email': self.email,
             'fullname' : self.fullname, 
             'room_id' : [room.to_dict() for room in self.rooms],
-            'properties': [prop.to_dict() for prop in self.properties],
+            'properties': self.properties,
             'created_at': self.created_at
         }
 
@@ -78,13 +80,15 @@ class Property(db.Model):
     hotel = db.Column(db.Boolean, nullable=True)
     hotel_price = db.Column(db.Integer, nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.id'), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
 
-    def __init__(self, price, name, hotel, hotel_price):
+    def __init__(self, price, name, hotel, hotel_price, user_id):
         self.price = price
         self.name = name
         self.hotel = hotel 
         self.hotel_price = hotel_price
+        self.user_id = user_id
 
     def to_dict(self):
         property_dict = {
@@ -93,7 +97,8 @@ class Property(db.Model):
             'name': self.name, 
             'hotel': self.hotel, 
             'hotel_price': self.hotel_price,  
-            'user_id': [user.to_dict() for user in self.users]
+            'user_id': self.user_id
+            # 'user_id': [user.to_dict() for user in self.users]
         } 
         if self.rooms is not None:
             property_dict['room_id'] = [room.to_dict() for room in self.rooms]

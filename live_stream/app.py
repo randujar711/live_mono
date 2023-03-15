@@ -35,15 +35,21 @@ def info():
     print(dir(platform))
     return {'machine': platform.node()}
 
-
-@app.post('/users')
+@app.get('/users')
 def users():
-    data = request.form
-    user = User(data['username'], data['email'], data['password'])
-    print(data)
-    db.session.add(user)
-    db.session.commit()
-    return jsonify(user.to_dict()), 201
+    users= User.query.all()
+    users_list = [user.to_dict() for user in users]
+    return jsonify(users_list), 201
+
+
+# @app.post('/users')
+# def users():
+#     data = request.form
+#     user = User(data['username'], data['email'], data['password'])
+#     print(data)
+#     db.session.add(user)
+#     db.session.commit()
+#     return jsonify(user.to_dict()), 201
 
 
 @app.get('/properties')
@@ -59,9 +65,8 @@ def buy_prop():
     data = request.json
     price = data['price']
     hotel = data['hotel']
-    # strptime converts date string to date object
     user_id = data['user_id']
-    prop = Property(hotel, user_id)
+    prop = Property(hotel)
     user = User.query.get(user_id)
     new_balance = user.balance - price
     print('WOAHHH', prop)
